@@ -1,0 +1,54 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-simulate-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Dummy Theme/Plugin
+        run: |
+          # Simulating having a custom theme and plugin
+          mkdir -p dist/theme dist/plugin
+          echo "Theme file" > dist/theme/style.css
+          echo "Plugin file" > dist/plugin/plugin.php
+
+      - name: Extract Version
+        id: version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            VERSION=$(git rev-parse --short HEAD)
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Build Artifacts (ZIP)
+        run: |
+          cd dist/theme
+          zip -r ../../theme-${{ env.VERSION }}.zip .
+          cd ../plugin
+          zip -r ../../plugin-${{ env.VERSION }}.zip .
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wp-artifacts
+          path: |
+            *.zip
+
+      - name: Simulate Deployment Context
+        run: |
+          echo "Simulating deployment to WordPress Multitenant Platform."
+          echo "In a real scenario, this would:"
+          echo "1. SCP the zip files to the jump host."
+          echo "2. Unzip into the appropriate tenant volume (e.g., /var/lib/docker/volumes/wp-multitenant_tenant1_data/_data/wp-content/themes/)."
+          echo "3. Run 'docker-compose exec tenant1 wp theme activate my-theme' via WP-CLI."
+          echo "Deployed Version: ${{ env.VERSION }}"

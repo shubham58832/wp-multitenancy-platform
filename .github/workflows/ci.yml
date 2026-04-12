@@ -1,0 +1,47 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: cs2pr, phpcs
+          coverage: none
+
+      - name: PHP Syntax Check (Lint)
+        run: |
+          # Finds all PHP files and lints them, stopping on first error
+          find . -name "*.php" -print0 | xargs -0 -n1 php -l 
+
+      - name: Install WPCS (WordPress Coding Standards)
+        run: |
+          composer create-project wp-coding-standards/wpcs --no-dev
+          phpcs --config-set installed_paths $(pwd)/wpcs
+
+      - name: Run WPCS
+        run: |
+          # We check the custom wp-content directory (if it exists)
+          if [ -d "wp-content" ]; then
+            phpcs --standard=WordPress wp-content/ -s
+          else
+            echo "No wp-content directory found to scan."
+          fi
+
+      - name: Run Psalm (Static Analysis)
+        run: |
+          composer require --dev vimeo/psalm
+          if [ -f "psalm.xml" ]; then
+            ./vendor/bin/psalm --output-format=github
+          else
+            echo "No psalm.xml found, skipping Psalm."
+          fi
