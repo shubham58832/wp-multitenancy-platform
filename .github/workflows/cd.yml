@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Dummy Theme/Plugin
+      - name: Create Plugin
         run: |
           # Simulating having a custom theme and plugin
           mkdir -p dist/theme dist/plugin
