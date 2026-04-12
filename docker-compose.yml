@@ -1,9 +1,7 @@
 version: '3.8'
 
 services:
-  # =========================================
-  # REVERSE PROXY (NGINX)
-  # =========================================
+ 
   nginx:
     image: nginx:alpine
     ports:
@@ -27,9 +25,7 @@ services:
     depends_on:
       - nginx
 
-  # =========================================
-  # DATABASE (Shared Server, Isolated DBs)
-  # =========================================
+  
   mysql:
     image: mysql:8.0
     environment:
@@ -46,9 +42,7 @@ services:
     networks:
       - wp_net
 
-  # =========================================
-  # TENANT 1
-  # =========================================
+  
   tenant1:
     image: wordpress:latest
     environment:
@@ -68,9 +62,7 @@ services:
     logging:
       driver: "json-file"
 
-  # =========================================
-  # TENANT 2
-  # =========================================
+ 
   tenant2:
     image: wordpress:latest
     environment:
@@ -90,9 +82,7 @@ services:
     logging:
       driver: "json-file"
 
-  # =========================================
-  # OBSERVABILITY
-  # =========================================
+  
   prometheus:
     image: prom/prometheus:latest
     volumes:
