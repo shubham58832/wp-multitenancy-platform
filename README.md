@@ -3,7 +3,7 @@
 Local Docker Compose setup for hosting multiple WordPress sites behind a single NGINX proxy.
 Includes logging and metrics (Prometheus, Grafana, Loki).
 ## Prerequisite
-1. EC@ instance min 2 cpu and min 4 Gb memory.
+1. EC2 instance  min 2 cpu and min 4 Gb memory.
 2. Docker and doker-compose install on that instance.
 
 ## Getting Started
