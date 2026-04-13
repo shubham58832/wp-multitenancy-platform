@@ -8,7 +8,7 @@ if [ -f .env ]; then
   # Extract SERVER_IP specifically
   SERVER_IP=$(grep -E "^SERVER_IP=" .env | cut -d '=' -f2)
 else
-  echo -e "\e[33m⚠️ Warning: .env file not found. Using default IP.\e[0m"
+  echo -e "\e[33m Warning: .env file not found. Using default IP.\e[0m"
 fi
 
 echo ""
